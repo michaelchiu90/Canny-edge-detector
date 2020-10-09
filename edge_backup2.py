@@ -59,17 +59,26 @@ def nonmax_suppress(G, Gx, Gy):
     # your code here
     GxA = np.divide(Gx ,G,out=np.zeros_like(Gx), where=G!=0)
     GyA = np.divide(Gy ,G,out=np.zeros_like(Gy), where=G!=0)
-    indices = np.indices(G.shape)
-    rowIndex = indices[0]
-    colIndex = indices[1]
+    GShape = G.shape
+
+    rowIndex = np.zeros(GShape[1])
+    for i in range(GShape[0]-1):
+        rowIndex = np.vstack((rowIndex, np.full((1,GShape[1]), i+1)))
+
+    colIndex = np.arange(GShape[1])
+    for i in range(GShape[0]-1):
+        colIndex = np.vstack((colIndex, np.arange(GShape[1])))
 
     XA_Plus = rowIndex + GyA
     YA_Plus = colIndex + GxA
+
     XA_Minus = rowIndex - GyA
-    YA_Minus = colIndex - GxA    
+    YA_Minus = colIndex - GxA
+    
     GPlus = ndimage.map_coordinates(G,[XA_Plus,YA_Plus])
     GMinus = ndimage.map_coordinates(G,[XA_Minus,YA_Minus])
     mask =  (G < GPlus) | (G < GMinus)
+
     G[mask] = 0
     return G
 
@@ -92,9 +101,16 @@ def hough(G):
     rhos = np.linspace(-Maxdist,Maxdist, 2*Maxdist)
     accumulator = np.zeros((2*Maxdist, len(thetas)))
 
+
+    ##################
+    #index_array = np.asarray(np.where(G>1)).T
+    #accumulator
+
     mask = np.argwhere(G != 0)
+    #mask_index = np.asarray(np.where(mask==1)).T
     sin_thetas = np.sin(np.deg2rad(thetas))
-    cos_thetas = np.cos(np.deg2rad(thetas))    
+    cos_thetas = np.cos(np.deg2rad(thetas))
+    
     rho_values = np.matmul(mask,np.array([sin_thetas,cos_thetas]))
 
     accumulator , _ , rho_values = np.histogram2d(
@@ -102,9 +118,44 @@ def hough(G):
         rho_values.ravel(),
         bins=[thetas,rhos]
     )
-    accumulator = np.transpose(accumulator)   
+    accumulator = np.transpose(accumulator)
+  
+    #######################
+    # for y in range(H):
+    #     for x in range(W):
+    #         if G[y,x] > 0:
+    #             for k in range(len(thetas)):
+    #                 p = x*np.cos(thetas[k]) + y*np.sin(thetas[k])
+    #                 # vote, p has value from -Maxdist to Maxdist
+    #                 accumulator[int(p)+Maxdist][k] +=1
+    
     return accumulator , thetas ,rhos
 
+def DrawLine(img_name,mask_index,rhos):
+    im = Image.open(img_name)
+    draw = ImageDraw.Draw(im)
+    #For each mask, draw a line
+    for index in range(len(mask_index)):
+        #Cut 0~180 degree in 720 parts before
+        theta = np.deg2rad(mask_index[index][1]/4)
+        p = mask_index[index][0]    
+        rho = rhos[p]
+        a = np.cos(theta)
+        b = np.sin(theta) 
+
+        #Cal the x/y-intercept
+        x0 = (a*rho)
+        y0 = (b*rho)
+
+        #1000 is length of line
+        x1 = int(x0 + 1000 * (-b))
+        y1 = int(y0 + 1000 * (a))
+        x2 = int(x0 - 1000 * (-b))
+        y2 = int(y0 - 1000 * (a))
+
+        draw.line([x1,y1,x2,y2], fill = 128, width=1)
+    
+    im = im.save("detection_result.jpg")
 
 img_name = 'road.jpeg'
 img = read_img_as_array(img_name)
@@ -144,28 +195,4 @@ mask = (accumulator > 130) & (accumulator>=G_RightShift) & (accumulator>=G_LeftS
 
 #Get all the local_max point (x,y)
 mask_index = np.asarray(np.where(mask==1)).T
-im = Image.open(img_name)
-draw = ImageDraw.Draw(im)
-
-#For each mask, draw a line
-for index in range(len(mask_index)):
-    #Cut 0~180 degree in 720 parts before
-    theta = np.deg2rad(mask_index[index][1]/4)
-    p = mask_index[index][0]    
-    rho = rhos[p]
-    a = np.cos(theta)
-    b = np.sin(theta) 
-
-    #Cal the x/y-intercept
-    x0 = (a*rho)
-    y0 = (b*rho)
-
-    #1000 is length of line
-    x1 = int(x0 + 1000 * (-b))
-    y1 = int(y0 + 1000 * (a))
-    x2 = int(x0 - 1000 * (-b))
-    y2 = int(y0 - 1000 * (a))
-
-    draw.line([x1,y1,x2,y2], fill = 128, width=1)
-
-im = im.save("detection_result.jpg")
+DrawLine(img_name,mask_index,rhos)

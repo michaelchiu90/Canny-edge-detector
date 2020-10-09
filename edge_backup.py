@@ -165,13 +165,13 @@ def hough(G):
     
     return accumulator , thetas ,rhos
 
-img_name = 'aqua.png'
-#img_name = 'road.jpeg'
+#img_name = 'aqua.png'
+img_name = 'road.jpeg'
 img = read_img_as_array(img_name)
 #print(img.shape)
 gray = rgb2gray(img)
 
-Gaussian = ndimage.gaussian_filter(gray,sigma=3)
+Gaussian = ndimage.gaussian_filter(gray,sigma=1)
 save_array_as_img(Gaussian, "gauss.jpg")
 G, Gx, Gy = sobel(Gaussian)
 save_array_as_img(G, "sobel.jpg")
@@ -206,7 +206,7 @@ def Local_MAX(G,i,j):
         for y in range(max(0,j-1), min(j+2,column_limit)):
             if x != i or y!= j:
                 #G[i][j] is local max and Larger than 100 vote
-                if G[x][y] > G[i][j] or 75 > G[i][j]:
+                if G[x][y] > G[i][j] or 130 > G[i][j]:
                     return False
 
     return True    
@@ -219,21 +219,21 @@ for i in range(row_limit):
     for j in range(column_limit):
         mask[i][j] = Local_MAX(accumulator,i,j)
 
-print(mask)
-print("mask.shape" + str(mask.shape))
-print(accumulator)
-print("accumulator.shape" + str(accumulator.shape))
+# print(mask)
+# print("mask.shape" + str(mask.shape))
+# print(accumulator)
+# print("accumulator.shape" + str(accumulator.shape))
 
 mask_index = np.asarray(np.where(mask==1)).T
-print("Count of mask:" + str(len(mask_index)))
-print(mask_index)
+# print("Count of mask:" + str(len(mask_index)))
+# print(mask_index)
 
 im = Image.open(img_name)
 draw = ImageDraw.Draw(im)
 
 
-print("rhos.shape:"+ str(rhos.shape))
-print(rhos)
+# print("rhos.shape:"+ str(rhos.shape))
+# print(rhos)
 
 for index in range(len(mask_index)):
     #print("index:" + str(index))
@@ -258,7 +258,7 @@ for index in range(len(mask_index)):
     y2 = int(y0 - 1000 * (a))
 
     #print("a,b,x0,y0" , str(a), str(b), str(x0), str(y0))
-    #print("x1,y1,x2,y2" , str(x1),str(y1),str(x2),str(y2))
+    print("x1,y1,x2,y2" , str(x1),str(y1),str(x2),str(y2))
     draw.line([x1,y1,x2,y2], fill = 128, width=1)
 
   
