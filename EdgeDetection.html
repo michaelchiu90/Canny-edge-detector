@@ -1,0 +1,1325 @@
+<!DOCTYPE html>
+<html data-markdown-preview-plus-context="html-export">
+  <head>
+    <meta charset="utf-8" />
+    <title>EdgeDetection</title><script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    jax: ["input/TeX","output/HTML-CSS"],
+    extensions: ["[a11y]/accessibility-menu.js"],
+    'HTML-CSS': {
+      availableFonts: [],
+      webFont: 'TeX',
+      undefinedFamily: "serif",
+      mtextFontInherit: true,
+    },
+    TeX: {
+  "Macros": {},
+  "equationNumbers": {
+    "autoNumber": "AMS",
+    "useLabelIds": false
+  },
+  "extensions": [
+    "AMSmath.js",
+    "AMSsymbols.js",
+    "noErrors.js",
+    "noUndefined.js",
+    "AMSmath.js"
+  ]
+},
+    showMathMenu: true
+  });
+</script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js"></script>
+    <style>.emoji {
+  max-width: 1em !important;
+}
+del {
+  text-decoration: none;
+  position: relative;
+}
+del::after {
+  border-bottom: 1px solid black;
+  content: '';
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 50%;
+}
+ul.contains-task-list li.task-list-item {
+  position: relative;
+  list-style-type: none;
+}
+ul.contains-task-list li.task-list-item input.task-list-item-checkbox {
+  position: absolute;
+  transform: translateX(-100%);
+  width: 30px;
+}
+span.critic.comment {
+  position: relative;
+}
+span.critic.comment::before {
+  content: '\1f4ac';
+  position: initial;
+}
+span.critic.comment > span {
+  display: none;
+}
+span.critic.comment:hover > span {
+  display: initial;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  border: 1px solid;
+  border-radius: 5px;
+  max-height: 4em;
+  overflow: auto;
+}
+span.critic.comment:focus > span {
+  display: initial;
+  text-decoration: underline;
+  position: initial;
+  top: auto;
+  left: auto;
+  border: initial;
+  border-radius: initial;
+}
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+  background-color: transparent;
+}
+
+body {
+  overflow: initial !important;
+  overflow: hidden;
+  font-family: "Helvetica Neue", Helvetica, "Segoe UI", Arial, freesans, sans-serif;
+  line-height: 1.6;
+  word-wrap: break-word;
+  padding: 30px;
+  font-size: 16px;
+  color: #333;
+  background-color: #fff;
+}
+body > *:first-child {
+  margin-top: 0 !important;
+}
+body > *:last-child {
+  margin-bottom: 0 !important;
+}
+body a:not([href]) {
+  color: inherit;
+  text-decoration: none;
+}
+body .absent {
+  color: #c00;
+}
+body .anchor {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  padding-right: 6px;
+  padding-left: 30px;
+  margin-left: -30px;
+}
+body .anchor:focus {
+  outline: none;
+}
+body h1,
+body h2,
+body h3,
+body h4,
+body h5,
+body h6 {
+  position: relative;
+  margin-top: 1em;
+  margin-bottom: 16px;
+  font-weight: bold;
+  line-height: 1.4;
+}
+body h1 .octicon-link,
+body h2 .octicon-link,
+body h3 .octicon-link,
+body h4 .octicon-link,
+body h5 .octicon-link,
+body h6 .octicon-link {
+  display: none;
+  color: #000;
+  vertical-align: middle;
+}
+body h1:hover .anchor,
+body h2:hover .anchor,
+body h3:hover .anchor,
+body h4:hover .anchor,
+body h5:hover .anchor,
+body h6:hover .anchor {
+  padding-left: 8px;
+  margin-left: -30px;
+  text-decoration: none;
+}
+body h1:hover .anchor .octicon-link,
+body h2:hover .anchor .octicon-link,
+body h3:hover .anchor .octicon-link,
+body h4:hover .anchor .octicon-link,
+body h5:hover .anchor .octicon-link,
+body h6:hover .anchor .octicon-link {
+  display: inline-block;
+}
+body h1 tt,
+body h2 tt,
+body h3 tt,
+body h4 tt,
+body h5 tt,
+body h6 tt,
+body h1 code,
+body h2 code,
+body h3 code,
+body h4 code,
+body h5 code,
+body h6 code {
+  font-size: inherit;
+}
+body h1 {
+  padding-bottom: 0.3em;
+  font-size: 2.25em;
+  line-height: 1.2;
+  border-bottom: 1px solid #eee;
+}
+body h1 .anchor {
+  line-height: 1;
+}
+body h2 {
+  padding-bottom: 0.3em;
+  font-size: 1.75em;
+  line-height: 1.225;
+  border-bottom: 1px solid #eee;
+}
+body h2 .anchor {
+  line-height: 1;
+}
+body h3 {
+  font-size: 1.5em;
+  line-height: 1.43;
+}
+body h3 .anchor {
+  line-height: 1.2;
+}
+body h4 {
+  font-size: 1.25em;
+}
+body h4 .anchor {
+  line-height: 1.2;
+}
+body h5 {
+  font-size: 1em;
+}
+body h5 .anchor {
+  line-height: 1.1;
+}
+body h6 {
+  font-size: 1em;
+  color: #777;
+}
+body h6 .anchor {
+  line-height: 1.1;
+}
+body p,
+body blockquote,
+body ul,
+body ol,
+body dl,
+body table,
+body pre {
+  margin-top: 0;
+  margin-bottom: 16px;
+}
+body hr {
+  height: 4px;
+  padding: 0;
+  margin: 16px 0;
+  background-color: #e7e7e7;
+  border: 0 none;
+}
+body ul,
+body ol {
+  padding-left: 2em;
+}
+body ul.no-list,
+body ol.no-list {
+  padding: 0;
+  list-style-type: none;
+}
+body ul ul,
+body ul ol,
+body ol ol,
+body ol ul {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+body li > p {
+  margin-top: 16px;
+}
+body dl {
+  padding: 0;
+}
+body dl dt {
+  padding: 0;
+  margin-top: 16px;
+  font-size: 1em;
+  font-style: italic;
+  font-weight: bold;
+}
+body dl dd {
+  padding: 0 16px;
+  margin-bottom: 16px;
+}
+body blockquote {
+  padding: 0 15px;
+  color: #777;
+  border-left: 4px solid #ddd;
+}
+body blockquote > :first-child {
+  margin-top: 0;
+}
+body blockquote > :last-child {
+  margin-bottom: 0;
+}
+body table {
+  display: block;
+  width: 100%;
+  overflow: auto;
+  word-break: normal;
+  word-break: keep-all;
+}
+body table th {
+  font-weight: bold;
+}
+body table th,
+body table td {
+  padding: 6px 13px;
+  border: 1px solid #ddd;
+}
+body table tr {
+  background-color: #fff;
+  border-top: 1px solid #ccc;
+}
+body table tr:nth-child(2n) {
+  background-color: #f8f8f8;
+}
+body img {
+  max-width: 100%;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+body .emoji {
+  max-width: none;
+}
+body span.frame {
+  display: block;
+  overflow: hidden;
+}
+body span.frame > span {
+  display: block;
+  float: left;
+  width: auto;
+  padding: 7px;
+  margin: 13px 0 0;
+  overflow: hidden;
+  border: 1px solid #ddd;
+}
+body span.frame span img {
+  display: block;
+  float: left;
+}
+body span.frame span span {
+  display: block;
+  padding: 5px 0 0;
+  clear: both;
+  color: #333;
+}
+body span.align-center {
+  display: block;
+  overflow: hidden;
+  clear: both;
+}
+body span.align-center > span {
+  display: block;
+  margin: 13px auto 0;
+  overflow: hidden;
+  text-align: center;
+}
+body span.align-center span img {
+  margin: 0 auto;
+  text-align: center;
+}
+body span.align-right {
+  display: block;
+  overflow: hidden;
+  clear: both;
+}
+body span.align-right > span {
+  display: block;
+  margin: 13px 0 0;
+  overflow: hidden;
+  text-align: right;
+}
+body span.align-right span img {
+  margin: 0;
+  text-align: right;
+}
+body span.float-left {
+  display: block;
+  float: left;
+  margin-right: 13px;
+  overflow: hidden;
+}
+body span.float-left span {
+  margin: 13px 0 0;
+}
+body span.float-right {
+  display: block;
+  float: right;
+  margin-left: 13px;
+  overflow: hidden;
+}
+body span.float-right > span {
+  display: block;
+  margin: 13px auto 0;
+  overflow: hidden;
+  text-align: right;
+}
+body code,
+body tt {
+  padding: 0;
+  padding-top: 0.2em;
+  padding-bottom: 0.2em;
+  margin: 0;
+  font-size: 85%;
+  background-color: rgba(0, 0, 0, 0.04);
+  border-radius: 3px;
+}
+body code:before,
+body tt:before,
+body code:after,
+body tt:after {
+  letter-spacing: -0.2em;
+  content: "\00a0";
+}
+body code br,
+body tt br {
+  display: none;
+}
+body del code {
+  text-decoration: inherit;
+}
+body pre > code {
+  padding: 0;
+  margin: 0;
+  font-size: 100%;
+  word-break: normal;
+  white-space: pre;
+  background: transparent;
+  border: 0;
+}
+body .highlight {
+  margin-bottom: 16px;
+}
+body .highlight pre,
+body pre {
+  padding: 16px;
+  overflow: auto;
+  font-size: 85%;
+  line-height: 1.45;
+  background-color: #f7f7f7;
+  border-radius: 3px;
+}
+body .highlight pre {
+  margin-bottom: 0;
+  word-break: normal;
+}
+body pre {
+  word-wrap: normal;
+}
+body pre code,
+body pre tt {
+  display: inline;
+  max-width: initial;
+  padding: 0;
+  margin: 0;
+  overflow: initial;
+  line-height: inherit;
+  word-wrap: normal;
+  background-color: transparent;
+  border: 0;
+}
+body pre code:before,
+body pre tt:before,
+body pre code:after,
+body pre tt:after {
+  content: normal;
+}
+body kbd {
+  display: inline-block;
+  padding: 3px 5px;
+  font-size: 11px;
+  line-height: 10px;
+  color: #555;
+  vertical-align: middle;
+  background-color: #fcfcfc;
+  border: solid 1px #ccc;
+  border-bottom-color: #bbb;
+  border-radius: 3px;
+  box-shadow: inset 0 -1px 0 #bbb;
+}
+span.critic.comment > span {
+  background-color: #fff;
+}
+a {
+  color: #337ab7;
+}
+
+.bracket-matcher .region {
+  border-bottom: 1px dotted lime;
+  position: absolute;
+}
+.line-number.bracket-matcher.bracket-matcher {
+  color: #abb2bf;
+  background-color: #3a3f4b;
+}
+
+.ftpconfig_line_error {
+  background: rgba(255, 0, 0, 0.5) !important;
+}
+.btn.btn-float-left {
+  float: left !important;
+}
+.btn.btn-float-right {
+  float: right !important;
+}
+
+.spell-check-misspelling .region {
+  border-bottom: 2px dotted rgba(255, 51, 51, 0.75);
+}
+.spell-check-corrections {
+  width: 25em !important;
+}
+
+pre.editor-colors {
+  background-color: #282c34;
+  color: #abb2bf;
+}
+pre.editor-colors .line.cursor-line {
+  background-color: rgba(153, 187, 255, 0.04);
+}
+pre.editor-colors .invisible {
+  color: #abb2bf;
+}
+pre.editor-colors .cursor {
+  border-left: 2px solid #528bff;
+}
+pre.editor-colors .selection .region {
+  background-color: #3e4451;
+}
+pre.editor-colors .bracket-matcher .region {
+  border-bottom: 1px solid #528bff;
+  box-sizing: border-box;
+}
+pre.editor-colors .invisible-character {
+  color: rgba(171, 178, 191, 0.15);
+}
+pre.editor-colors .indent-guide {
+  color: rgba(171, 178, 191, 0.15);
+}
+pre.editor-colors .wrap-guide {
+  background-color: rgba(171, 178, 191, 0.15);
+}
+pre.editor-colors .find-result .region.region.region,
+pre.editor-colors .current-result .region.region.region {
+  border-radius: 2px;
+  background-color: rgba(82, 139, 255, 0.24);
+  transition: border-color 0.4s;
+}
+pre.editor-colors .find-result .region.region.region {
+  border: 2px solid transparent;
+}
+pre.editor-colors .current-result .region.region.region {
+  border: 2px solid #528bff;
+  transition-duration: .1s;
+}
+pre.editor-colors .gutter .line-number {
+  color: #636d83;
+  -webkit-font-smoothing: antialiased;
+}
+pre.editor-colors .gutter .line-number.cursor-line {
+  color: #abb2bf;
+  background-color: #3a3f4b;
+}
+pre.editor-colors .gutter .line-number.cursor-line-no-selection {
+  background-color: transparent;
+}
+pre.editor-colors .gutter .line-number .icon-right {
+  color: #abb2bf;
+}
+pre.editor-colors .gutter:not(.git-diff-icon) .line-number.git-line-removed.git-line-removed::before {
+  bottom: -3px;
+}
+pre.editor-colors .gutter:not(.git-diff-icon) .line-number.git-line-removed::after {
+  content: "";
+  position: absolute;
+  left: 0px;
+  bottom: 0px;
+  width: 25px;
+  border-bottom: 1px dotted rgba(224, 82, 82, 0.5);
+  pointer-events: none;
+}
+pre.editor-colors .gutter .line-number.folded,
+pre.editor-colors .gutter .line-number:after,
+pre.editor-colors .fold-marker:after {
+  color: #abb2bf;
+}
+.syntax--comment {
+  color: #5c6370;
+  font-style: italic;
+}
+.syntax--comment .syntax--markup.syntax--link {
+  color: #5c6370;
+}
+.syntax--entity.syntax--name.syntax--type {
+  color: #e5c07b;
+}
+.syntax--entity.syntax--other.syntax--inherited-class {
+  color: #e5c07b;
+}
+.syntax--keyword {
+  color: #c678dd;
+}
+.syntax--keyword.syntax--control {
+  color: #c678dd;
+}
+.syntax--keyword.syntax--operator {
+  color: #c678dd;
+}
+.syntax--keyword.syntax--other.syntax--special-method {
+  color: #61afef;
+}
+.syntax--keyword.syntax--other.syntax--unit {
+  color: #d19a66;
+}
+.syntax--storage {
+  color: #c678dd;
+}
+.syntax--storage.syntax--type.syntax--annotation,
+.syntax--storage.syntax--type.syntax--primitive {
+  color: #c678dd;
+}
+.syntax--storage.syntax--modifier.syntax--package,
+.syntax--storage.syntax--modifier.syntax--import {
+  color: #abb2bf;
+}
+.syntax--constant {
+  color: #d19a66;
+}
+.syntax--constant.syntax--variable {
+  color: #d19a66;
+}
+.syntax--constant.syntax--character.syntax--escape {
+  color: #56b6c2;
+}
+.syntax--constant.syntax--numeric {
+  color: #d19a66;
+}
+.syntax--constant.syntax--other.syntax--color {
+  color: #56b6c2;
+}
+.syntax--constant.syntax--other.syntax--symbol {
+  color: #56b6c2;
+}
+.syntax--variable {
+  color: #e06c75;
+}
+.syntax--variable.syntax--interpolation {
+  color: #be5046;
+}
+.syntax--variable.syntax--parameter {
+  color: #abb2bf;
+}
+.syntax--string {
+  color: #98c379;
+}
+.syntax--string > .syntax--source,
+.syntax--string .syntax--embedded {
+  color: #abb2bf;
+}
+.syntax--string.syntax--regexp {
+  color: #56b6c2;
+}
+.syntax--string.syntax--regexp .syntax--source.syntax--ruby.syntax--embedded {
+  color: #e5c07b;
+}
+.syntax--string.syntax--other.syntax--link {
+  color: #e06c75;
+}
+.syntax--punctuation.syntax--definition.syntax--comment {
+  color: #5c6370;
+}
+.syntax--punctuation.syntax--definition.syntax--method-parameters,
+.syntax--punctuation.syntax--definition.syntax--function-parameters,
+.syntax--punctuation.syntax--definition.syntax--parameters,
+.syntax--punctuation.syntax--definition.syntax--separator,
+.syntax--punctuation.syntax--definition.syntax--seperator,
+.syntax--punctuation.syntax--definition.syntax--array {
+  color: #abb2bf;
+}
+.syntax--punctuation.syntax--definition.syntax--heading,
+.syntax--punctuation.syntax--definition.syntax--identity {
+  color: #61afef;
+}
+.syntax--punctuation.syntax--definition.syntax--bold {
+  color: #e5c07b;
+  font-weight: bold;
+}
+.syntax--punctuation.syntax--definition.syntax--italic {
+  color: #c678dd;
+  font-style: italic;
+}
+.syntax--punctuation.syntax--section.syntax--embedded {
+  color: #be5046;
+}
+.syntax--punctuation.syntax--section.syntax--method,
+.syntax--punctuation.syntax--section.syntax--class,
+.syntax--punctuation.syntax--section.syntax--inner-class {
+  color: #abb2bf;
+}
+.syntax--support.syntax--class {
+  color: #e5c07b;
+}
+.syntax--support.syntax--type {
+  color: #56b6c2;
+}
+.syntax--support.syntax--function {
+  color: #56b6c2;
+}
+.syntax--support.syntax--function.syntax--any-method {
+  color: #61afef;
+}
+.syntax--entity.syntax--name.syntax--function {
+  color: #61afef;
+}
+.syntax--entity.syntax--name.syntax--class,
+.syntax--entity.syntax--name.syntax--type.syntax--class {
+  color: #e5c07b;
+}
+.syntax--entity.syntax--name.syntax--section {
+  color: #61afef;
+}
+.syntax--entity.syntax--name.syntax--tag {
+  color: #e06c75;
+}
+.syntax--entity.syntax--other.syntax--attribute-name {
+  color: #d19a66;
+}
+.syntax--entity.syntax--other.syntax--attribute-name.syntax--id {
+  color: #61afef;
+}
+.syntax--meta.syntax--class {
+  color: #e5c07b;
+}
+.syntax--meta.syntax--class.syntax--body {
+  color: #abb2bf;
+}
+.syntax--meta.syntax--method-call,
+.syntax--meta.syntax--method {
+  color: #abb2bf;
+}
+.syntax--meta.syntax--definition.syntax--variable {
+  color: #e06c75;
+}
+.syntax--meta.syntax--link {
+  color: #d19a66;
+}
+.syntax--meta.syntax--require {
+  color: #61afef;
+}
+.syntax--meta.syntax--selector {
+  color: #c678dd;
+}
+.syntax--meta.syntax--separator {
+  color: #abb2bf;
+}
+.syntax--meta.syntax--tag {
+  color: #abb2bf;
+}
+.syntax--underline {
+  text-decoration: underline;
+}
+.syntax--none {
+  color: #abb2bf;
+}
+.syntax--invalid.syntax--deprecated {
+  color: #523d14 !important;
+  background-color: #e0c285 !important;
+}
+.syntax--invalid.syntax--illegal {
+  color: white !important;
+  background-color: #e05252 !important;
+}
+.syntax--markup.syntax--bold {
+  color: #d19a66;
+  font-weight: bold;
+}
+.syntax--markup.syntax--changed {
+  color: #c678dd;
+}
+.syntax--markup.syntax--deleted {
+  color: #e06c75;
+}
+.syntax--markup.syntax--italic {
+  color: #c678dd;
+  font-style: italic;
+}
+.syntax--markup.syntax--heading {
+  color: #e06c75;
+}
+.syntax--markup.syntax--heading .syntax--punctuation.syntax--definition.syntax--heading {
+  color: #61afef;
+}
+.syntax--markup.syntax--link {
+  color: #56b6c2;
+}
+.syntax--markup.syntax--inserted {
+  color: #98c379;
+}
+.syntax--markup.syntax--quote {
+  color: #d19a66;
+}
+.syntax--markup.syntax--raw {
+  color: #98c379;
+}
+.syntax--source.syntax--c .syntax--keyword.syntax--operator {
+  color: #c678dd;
+}
+.syntax--source.syntax--cpp .syntax--keyword.syntax--operator {
+  color: #c678dd;
+}
+.syntax--source.syntax--cs .syntax--keyword.syntax--operator {
+  color: #c678dd;
+}
+.syntax--source.syntax--css .syntax--property-name,
+.syntax--source.syntax--css .syntax--property-value {
+  color: #828997;
+}
+.syntax--source.syntax--css .syntax--property-name.syntax--support,
+.syntax--source.syntax--css .syntax--property-value.syntax--support {
+  color: #abb2bf;
+}
+.syntax--source.syntax--elixir .syntax--source.syntax--embedded.syntax--source {
+  color: #abb2bf;
+}
+.syntax--source.syntax--elixir .syntax--constant.syntax--language,
+.syntax--source.syntax--elixir .syntax--constant.syntax--numeric,
+.syntax--source.syntax--elixir .syntax--constant.syntax--definition {
+  color: #61afef;
+}
+.syntax--source.syntax--elixir .syntax--variable.syntax--definition,
+.syntax--source.syntax--elixir .syntax--variable.syntax--anonymous {
+  color: #c678dd;
+}
+.syntax--source.syntax--elixir .syntax--parameter.syntax--variable.syntax--function {
+  color: #d19a66;
+  font-style: italic;
+}
+.syntax--source.syntax--elixir .syntax--quoted {
+  color: #98c379;
+}
+.syntax--source.syntax--elixir .syntax--keyword.syntax--special-method,
+.syntax--source.syntax--elixir .syntax--embedded.syntax--section,
+.syntax--source.syntax--elixir .syntax--embedded.syntax--source.syntax--empty {
+  color: #e06c75;
+}
+.syntax--source.syntax--elixir .syntax--readwrite.syntax--module .syntax--punctuation {
+  color: #e06c75;
+}
+.syntax--source.syntax--elixir .syntax--regexp.syntax--section,
+.syntax--source.syntax--elixir .syntax--regexp.syntax--string {
+  color: #be5046;
+}
+.syntax--source.syntax--elixir .syntax--separator,
+.syntax--source.syntax--elixir .syntax--keyword.syntax--operator {
+  color: #d19a66;
+}
+.syntax--source.syntax--elixir .syntax--variable.syntax--constant {
+  color: #e5c07b;
+}
+.syntax--source.syntax--elixir .syntax--array,
+.syntax--source.syntax--elixir .syntax--scope,
+.syntax--source.syntax--elixir .syntax--section {
+  color: #828997;
+}
+.syntax--source.syntax--gfm .syntax--markup {
+  -webkit-font-smoothing: auto;
+}
+.syntax--source.syntax--gfm .syntax--link .syntax--entity {
+  color: #61afef;
+}
+.syntax--source.syntax--go .syntax--storage.syntax--type.syntax--string {
+  color: #c678dd;
+}
+.syntax--source.syntax--ini .syntax--keyword.syntax--other.syntax--definition.syntax--ini {
+  color: #e06c75;
+}
+.syntax--source.syntax--java .syntax--storage.syntax--modifier.syntax--import {
+  color: #e5c07b;
+}
+.syntax--source.syntax--java .syntax--storage.syntax--type {
+  color: #e5c07b;
+}
+.syntax--source.syntax--java .syntax--keyword.syntax--operator.syntax--instanceof {
+  color: #c678dd;
+}
+.syntax--source.syntax--java-properties .syntax--meta.syntax--key-pair {
+  color: #e06c75;
+}
+.syntax--source.syntax--java-properties .syntax--meta.syntax--key-pair > .syntax--punctuation {
+  color: #abb2bf;
+}
+.syntax--source.syntax--js .syntax--keyword.syntax--operator {
+  color: #56b6c2;
+}
+.syntax--source.syntax--js .syntax--keyword.syntax--operator.syntax--delete,
+.syntax--source.syntax--js .syntax--keyword.syntax--operator.syntax--in,
+.syntax--source.syntax--js .syntax--keyword.syntax--operator.syntax--of,
+.syntax--source.syntax--js .syntax--keyword.syntax--operator.syntax--instanceof,
+.syntax--source.syntax--js .syntax--keyword.syntax--operator.syntax--new,
+.syntax--source.syntax--js .syntax--keyword.syntax--operator.syntax--typeof,
+.syntax--source.syntax--js .syntax--keyword.syntax--operator.syntax--void {
+  color: #c678dd;
+}
+.syntax--source.syntax--ts .syntax--keyword.syntax--operator {
+  color: #56b6c2;
+}
+.syntax--source.syntax--flow .syntax--keyword.syntax--operator {
+  color: #56b6c2;
+}
+.syntax--source.syntax--json .syntax--meta.syntax--structure.syntax--dictionary.syntax--json > .syntax--string.syntax--quoted.syntax--json {
+  color: #e06c75;
+}
+.syntax--source.syntax--json .syntax--meta.syntax--structure.syntax--dictionary.syntax--json > .syntax--string.syntax--quoted.syntax--json > .syntax--punctuation.syntax--string {
+  color: #e06c75;
+}
+.syntax--source.syntax--json .syntax--meta.syntax--structure.syntax--dictionary.syntax--json > .syntax--value.syntax--json > .syntax--string.syntax--quoted.syntax--json,
+.syntax--source.syntax--json .syntax--meta.syntax--structure.syntax--array.syntax--json > .syntax--value.syntax--json > .syntax--string.syntax--quoted.syntax--json,
+.syntax--source.syntax--json .syntax--meta.syntax--structure.syntax--dictionary.syntax--json > .syntax--value.syntax--json > .syntax--string.syntax--quoted.syntax--json > .syntax--punctuation,
+.syntax--source.syntax--json .syntax--meta.syntax--structure.syntax--array.syntax--json > .syntax--value.syntax--json > .syntax--string.syntax--quoted.syntax--json > .syntax--punctuation {
+  color: #98c379;
+}
+.syntax--source.syntax--json .syntax--meta.syntax--structure.syntax--dictionary.syntax--json > .syntax--constant.syntax--language.syntax--json,
+.syntax--source.syntax--json .syntax--meta.syntax--structure.syntax--array.syntax--json > .syntax--constant.syntax--language.syntax--json {
+  color: #56b6c2;
+}
+.syntax--ng.syntax--interpolation {
+  color: #e06c75;
+}
+.syntax--ng.syntax--interpolation.syntax--begin,
+.syntax--ng.syntax--interpolation.syntax--end {
+  color: #61afef;
+}
+.syntax--ng.syntax--interpolation .syntax--function {
+  color: #e06c75;
+}
+.syntax--ng.syntax--interpolation .syntax--function.syntax--begin,
+.syntax--ng.syntax--interpolation .syntax--function.syntax--end {
+  color: #61afef;
+}
+.syntax--ng.syntax--interpolation .syntax--bool {
+  color: #d19a66;
+}
+.syntax--ng.syntax--interpolation .syntax--bracket {
+  color: #abb2bf;
+}
+.syntax--ng.syntax--pipe,
+.syntax--ng.syntax--operator {
+  color: #abb2bf;
+}
+.syntax--ng.syntax--tag {
+  color: #56b6c2;
+}
+.syntax--ng.syntax--attribute-with-value .syntax--attribute-name {
+  color: #e5c07b;
+}
+.syntax--ng.syntax--attribute-with-value .syntax--string {
+  color: #c678dd;
+}
+.syntax--ng.syntax--attribute-with-value .syntax--string.syntax--begin,
+.syntax--ng.syntax--attribute-with-value .syntax--string.syntax--end {
+  color: #abb2bf;
+}
+.syntax--source.syntax--ruby .syntax--constant.syntax--other.syntax--symbol > .syntax--punctuation {
+  color: inherit;
+}
+.syntax--source.syntax--php .syntax--class.syntax--bracket {
+  color: #abb2bf;
+}
+.syntax--source.syntax--python .syntax--keyword.syntax--operator.syntax--logical.syntax--python {
+  color: #c678dd;
+}
+.syntax--source.syntax--python .syntax--variable.syntax--parameter {
+  color: #d19a66;
+}
+
+/*
+ * Your Stylesheet
+ *
+ * This stylesheet is loaded when Atom starts up and is reloaded automatically
+ * when it is changed and saved.
+ *
+ * Add your own CSS or Less to fully customize Atom.
+ * If you are unfamiliar with Less, you can read more about it here:
+ * http://lesscss.org
+ */
+/*
+ * Examples
+ * (To see them, uncomment and save)
+ */
+</style>
+
+  </head>
+  <body>
+    <h1 id="edge-detection-via-canny-edge-detector">Edge Detection via Canny Edge Detector</h1>
+<ul>
+<li><a href="#image-and-ndarray">Image and Ndarray</a></li>
+<li><a href="#manipulate-ndarrays">Manipulate Ndarrays</a>
+<ul>
+<li><a href="#array-attributes">Array attributes</a></li>
+<li><a href="#array-creation">Array creation</a></li>
+<li><a href="#arithmetic-operation">Arithmetic operation</a></li>
+<li><a href="#reshaping-indexing-slicing-">Reshaping / indexing / slicing /</a></li>
+</ul>
+</li>
+<li><a href="#edge-detection-via-canny-edge-detector">Edge Detection via Canny Edge Detector</a>
+<ul>
+<li><a href="#gaussian-smooth">Gaussian smooth</a></li>
+<li><a href="#sobel-operator">Sobel operator</a></li>
+<li><a href="#non-maximum-suppression">Non-maximum suppression</a></li>
+<li><a href="#thresholding">Thresholding</a></li>
+<li><a href="#hough-transform">Hough Transform</a></li>
+</ul>
+</li>
+<li><a href="#assignment">Assignment</a></li>
+</ul>
+<p>Please read this <a href="SetupPython.html">Python Setup</a> instruction before getting started.</p>
+<!-- ## Read & Write Image
+[Pillow](https://pillow.readthedocs.io/en/stable/handbook/tutorial.html) (PIL) provides basic functions for image read & write. We can read/display/write image by `open`, `show` and `save` like this:
+
+```python
+# load image
+from PIL import Image
+import numpy as np
+img = Image.open('road.jpeg')
+
+# display the image
+img.show()
+
+# save to file
+img.save('road2.jpeg')
+``` -->
+<h2 id="image-and-ndarray">Image and Ndarray</h2>
+<p>In digital computer, colour images are represented as 3-d arrays. Each element of the array is a 8-bit integer, ranged in [0, 255]. The three dimensions are height, width, and channels respectively. The whole array has shape</p>
+<span class="math display-math"><script type="math/tex; mode=display">(Height \times Width \times Channels).
+</script></span>
+<center>
+<img alt="output/output0.jpg" style="width:40%" src="https://brohrer.github.io/images/image_processing/three_d_array.png">
+</center>
+<p>NumPy is the de facto standard library of ndarray arithmetic in python. Nearly all image processing in this course is performed via NumPy, so in most time images is represented as <code style="font-family: Menlo, Consolas, &quot;DejaVu Sans Mono&quot;, monospace;">numpy.ndarray</code> object. <code style="font-family: Menlo, Consolas, &quot;DejaVu Sans Mono&quot;, monospace;">PIL.image</code> is involved only in reading/writing image files. A typical image processing program using NumPy and PIL looks like:</p>
+<pre class="editor-colors lang-python"><span><span class="syntax--source syntax--python"><span class="syntax--keyword syntax--control">from</span> PIL <span class="syntax--keyword syntax--control">import</span> Image <span class="syntax--comment syntax--line"># pillow package</span></span></span>
+<span><span class="syntax--source syntax--python"><span class="syntax--keyword syntax--control">import</span> numpy <span class="syntax--keyword syntax--control">as</span> np</span></span>
+<span></span> 
+<span><span class="syntax--source syntax--python">img <span class="syntax--keyword syntax--operator">=</span> Image.<span class="syntax--entity syntax--name syntax--function">open</span>(<span class="syntax--string syntax--quoted">'a.jpg'</span>)               <span class="syntax--comment syntax--line"># read image file</span></span></span>
+<span><span class="syntax--source syntax--python">arr <span class="syntax--keyword syntax--operator">=</span> np.<span class="syntax--entity syntax--name syntax--function">asarray</span>(img, <span class="syntax--variable syntax--parameter syntax--function">dtype</span><span class="syntax--keyword syntax--operator">=</span>np.<span class="syntax--variable syntax--other syntax--object syntax--property">float64</span>) <span class="syntax--comment syntax--line"># convert to np.ndarray</span></span></span>
+<span></span> 
+<span><span class="syntax--source syntax--python"><span class="syntax--comment syntax--line"># process the array here, e.g.</span></span></span>
+<span><span class="syntax--source syntax--python">arr <span class="syntax--keyword syntax--operator">=</span> arr<span class="syntax--keyword syntax--operator">/</span><span class="syntax--constant syntax--numeric">2</span></span></span>
+<span></span> 
+<span><span class="syntax--source syntax--python">arr <span class="syntax--keyword syntax--operator">=</span> arr.<span class="syntax--entity syntax--name syntax--function">astype</span>(np.<span class="syntax--variable syntax--other syntax--object syntax--property">uint8</span>) <span class="syntax--comment syntax--line"># make sure dtype is uint8</span></span></span>
+<span><span class="syntax--source syntax--python">img <span class="syntax--keyword syntax--operator">=</span> Image.<span class="syntax--entity syntax--name syntax--function">fromarray</span>(arr) <span class="syntax--comment syntax--line"># convert back to PIL.image object</span></span></span>
+<span><span class="syntax--source syntax--python">img.<span class="syntax--entity syntax--name syntax--function">save</span>(<span class="syntax--string syntax--quoted">'b.jpg'</span>)          <span class="syntax--comment syntax--line"># save to file</span></span></span></pre>
+<p>I have provided three useful function to help you read/write/show ndarrays as images in <code style="font-family: Menlo, Consolas, &quot;DejaVu Sans Mono&quot;, monospace;">edge.py</code>:</p>
+<ul>
+<li><code style="font-family: Menlo, Consolas, &quot;DejaVu Sans Mono&quot;, monospace;">read_img_as_array(file)</code></li>
+<li><code style="font-family: Menlo, Consolas, &quot;DejaVu Sans Mono&quot;, monospace;">save_array_as_img(arr, file)</code></li>
+<li><code style="font-family: Menlo, Consolas, &quot;DejaVu Sans Mono&quot;, monospace;">show_array_as_img(arr)</code></li>
+</ul>
+<h2 id="manipulate-ndarrays">Manipulate Ndarrays</h2>
+<p>NumPy provides nearly all array operation you can imagine, including</p>
+<ul>
+<li>arithmetic operation
+<ul>
+<li>addition, subtraction, multiplication, and division,</li>
+<li>sin/cos/tan/exp/power/log,</li>
+</ul>
+</li>
+<li>indexing, slicing, stacking, concatenation, and shape manipulation</li>
+<li>matrix multiplication,</li>
+<li>etc.</li>
+</ul>
+<p>This 30-minute official <a href="https://numpy.org/devdocs/user/quickstart.html">NumPy tutorial</a> will give you a quick overview of NumPy. You need it in both this assignment and future assignments, so please read it yourself after class. Here, I only cover several important parts of the tutorial to help you handle this assignment.</p>
+<h3 id="array-attributes">Array attributes</h3>
+<p>Every ndarray has following three attributes – <code style="font-family: Menlo, Consolas, &quot;DejaVu Sans Mono&quot;, monospace;">shape</code>, <code style="font-family: Menlo, Consolas, &quot;DejaVu Sans Mono&quot;, monospace;">dtype</code> and <code style="font-family: Menlo, Consolas, &quot;DejaVu Sans Mono&quot;, monospace;">ndim</code>.</p>
+<ul>
+<li><code style="font-family: Menlo, Consolas, &quot;DejaVu Sans Mono&quot;, monospace;">dtype</code> indicates whether underlying elements are integers or floating point number and how many bits they have.</li>
+<li><code style="font-family: Menlo, Consolas, &quot;DejaVu Sans Mono&quot;, monospace;">shape</code> indicates the shape of the ndarray., e.g, the number of rows and columns of matrix, the length of a vector, etc. A color image usually has shape <span class="math inline-math"><script type="math/tex">(H, W, C)</script></span>.</li>
+<li><code style="font-family: Menlo, Consolas, &quot;DejaVu Sans Mono&quot;, monospace;">ndim</code> are the dimension number of the array.
+<ul>
+<li><code style="font-family: Menlo, Consolas, &quot;DejaVu Sans Mono&quot;, monospace;">ndim==0</code>: scalar,</li>
+<li><code style="font-family: Menlo, Consolas, &quot;DejaVu Sans Mono&quot;, monospace;">ndim==1</code>: vector,</li>
+<li><code style="font-family: Menlo, Consolas, &quot;DejaVu Sans Mono&quot;, monospace;">ndim==2</code>: matrix.</li>
+<li><code style="font-family: Menlo, Consolas, &quot;DejaVu Sans Mono&quot;, monospace;">ndim&gt;=3</code>: multi-dimensional array, or say, tensor.</li>
+</ul>
+</li>
+</ul>
+<pre class="editor-colors lang-python"><span><span class="syntax--source syntax--python"><span class="syntax--comment syntax--line"># Create array from list</span></span></span>
+<span><span class="syntax--source syntax--python">a <span class="syntax--keyword syntax--operator">=</span> np.<span class="syntax--entity syntax--name syntax--function">array</span>([[<span class="syntax--constant syntax--numeric">1</span>, <span class="syntax--constant syntax--numeric">2</span>],</span></span>
+<span><span class="syntax--source syntax--python"><span class="leading-whitespace">              </span>[<span class="syntax--constant syntax--numeric">5</span>, <span class="syntax--constant syntax--numeric">6</span>]])</span></span>
+<span></span> 
+<span><span class="syntax--source syntax--python">a.<span class="syntax--variable syntax--other syntax--object syntax--property">shape</span> <span class="syntax--comment syntax--line"># (2,2)</span></span></span>
+<span><span class="syntax--source syntax--python">a.<span class="syntax--variable syntax--other syntax--object syntax--property">dtype</span> <span class="syntax--comment syntax--line"># int64 -- 64-bit integer</span></span></span>
+<span><span class="syntax--source syntax--python">a.<span class="syntax--variable syntax--other syntax--object syntax--property">ndim</span>  <span class="syntax--comment syntax--line"># 2, means it is a matrix.</span></span></span></pre>
+<h3 id="array-creation">Array creation</h3>
+<p>Create an all one matrix of shape 2x3:</p>
+<pre class="editor-colors lang-python"><span><span class="syntax--source syntax--python">a <span class="syntax--keyword syntax--operator">=</span> np.<span class="syntax--entity syntax--name syntax--function">ones</span>([<span class="syntax--constant syntax--numeric">2</span>,<span class="syntax--constant syntax--numeric">3</span>])  <span class="syntax--comment syntax--line"># all one matrix of shape 2x3</span></span></span>
+<span><span class="syntax--source syntax--python"><span class="syntax--comment syntax--line"># array([[1., 1., 1.],</span></span></span>
+<span><span class="syntax--source syntax--python"><span class="syntax--comment syntax--line">#        [1., 1., 1.]])</span></span></span></pre>
+<p>The default dtype is <code style="font-family: Menlo, Consolas, &quot;DejaVu Sans Mono&quot;, monospace;">float64</code> (double), you can specify other dtype:</p>
+<pre class="editor-colors lang-python"><span><span class="syntax--source syntax--python">a <span class="syntax--keyword syntax--operator">=</span> np.<span class="syntax--entity syntax--name syntax--function">ones</span>([<span class="syntax--constant syntax--numeric">2</span>,<span class="syntax--constant syntax--numeric">3</span>], <span class="syntax--variable syntax--parameter syntax--function">dtype</span><span class="syntax--keyword syntax--operator">=</span>np.<span class="syntax--variable syntax--other syntax--object syntax--property">int32</span>)  <span class="syntax--comment syntax--line"># all one matrix of 32-bit integers</span></span></span>
+<span><span class="syntax--source syntax--python"><span class="syntax--comment syntax--line"># array([[1, 1, 1],</span></span></span>
+<span><span class="syntax--source syntax--python"><span class="syntax--comment syntax--line">#        [1, 1, 1]], dtype=int32)</span></span></span></pre>
+<p>Create all zero matrix of shape 3x2:</p>
+<pre class="editor-colors lang-python"><span><span class="syntax--source syntax--python">a <span class="syntax--keyword syntax--operator">=</span> np.<span class="syntax--entity syntax--name syntax--function">zeros</span>([<span class="syntax--constant syntax--numeric">3</span>,<span class="syntax--constant syntax--numeric">2</span>]) <span class="syntax--comment syntax--line"># all zero matrix of shape 3x2</span></span></span>
+<span><span class="syntax--source syntax--python"><span class="syntax--comment syntax--line"># array([[0., 0.],</span></span></span>
+<span><span class="syntax--source syntax--python"><span class="syntax--comment syntax--line">#        [0., 0.],</span></span></span>
+<span><span class="syntax--source syntax--python"><span class="syntax--comment syntax--line">#        [0., 0.]])</span></span></span></pre>
+<p>Create matrix of shape 2x2 with unknown value:</p>
+<pre class="editor-colors lang-python"><span><span class="syntax--source syntax--python">a <span class="syntax--keyword syntax--operator">=</span> np.<span class="syntax--entity syntax--name syntax--function">empty</span>([<span class="syntax--constant syntax--numeric">2</span>,<span class="syntax--constant syntax--numeric">2</span>]) <span class="syntax--comment syntax--line"># matrix of shape 2x2 with unknown value</span></span></span>
+<span><span class="syntax--source syntax--python"><span class="syntax--comment syntax--line"># e.g.</span></span></span>
+<span><span class="syntax--source syntax--python"><span class="syntax--comment syntax--line"># array([[2.31584178e+077, 2.31584178e+077],</span></span></span>
+<span><span class="syntax--source syntax--python"><span class="syntax--comment syntax--line">#        [2.96439388e-323, 6.93989086e-310]])</span></span></span></pre>
+<p>Create an array from 0 to 5, (6 elements in total):</p>
+<pre class="editor-colors lang-python"><span><span class="syntax--source syntax--python">a <span class="syntax--keyword syntax--operator">=</span> np.<span class="syntax--entity syntax--name syntax--function">arange</span>(<span class="syntax--constant syntax--numeric">6</span>)</span></span>
+<span><span class="syntax--source syntax--python"><span class="syntax--comment syntax--line"># array([0, 1, 2, 3, 4, 5])</span></span></span></pre>
+<h3 id="arithmetic-operation">Arithmetic operation</h3>
+<p>Added by a number — all elements will be added that number:</p>
+<pre class="editor-colors lang-python"><span><span class="syntax--source syntax--python">a <span class="syntax--keyword syntax--operator">=</span> np.<span class="syntax--entity syntax--name syntax--function">array</span>([[<span class="syntax--constant syntax--numeric">1</span>, <span class="syntax--constant syntax--numeric">2</span>],</span></span>
+<span><span class="syntax--source syntax--python"><span class="leading-whitespace">              </span>[<span class="syntax--constant syntax--numeric">5</span>, <span class="syntax--constant syntax--numeric">6</span>]])</span></span>
+<span></span> 
+<span><span class="syntax--source syntax--python">a <span class="syntax--keyword syntax--operator">+</span> <span class="syntax--constant syntax--numeric">1</span>   <span class="syntax--comment syntax--line"># addition</span></span></span>
+<span><span class="syntax--source syntax--python"><span class="syntax--comment syntax--line"># result:</span></span></span>
+<span><span class="syntax--source syntax--python"><span class="syntax--comment syntax--line"># array([[2, 3],</span></span></span>
+<span><span class="syntax--source syntax--python"><span class="syntax--comment syntax--line">#        [6, 7]])</span></span></span>
+<span></span> 
+<span><span class="syntax--source syntax--python"><span class="syntax--comment syntax--line"># subtraction, multiplication, and division are same.</span></span></span>
+<span><span class="syntax--source syntax--python">a <span class="syntax--keyword syntax--operator">-</span> <span class="syntax--constant syntax--numeric">1.5</span> <span class="syntax--comment syntax--line"># subtraction</span></span></span>
+<span><span class="syntax--source syntax--python">a <span class="syntax--keyword syntax--operator">*</span> <span class="syntax--constant syntax--numeric">5</span>   <span class="syntax--comment syntax--line"># multiplication</span></span></span>
+<span><span class="syntax--source syntax--python">a <span class="syntax--keyword syntax--operator">/</span> <span class="syntax--constant syntax--numeric">3</span>   <span class="syntax--comment syntax--line"># division</span></span></span></pre>
+<p>Added by a row/column vector – all rows/columns will be added the vector. Subtraction, multiplication, and division are same.</p>
+<pre class="editor-colors lang-python"><span><span class="syntax--source syntax--python"><span class="syntax--comment syntax--line"># row vector</span></span></span>
+<span><span class="syntax--source syntax--python">a <span class="syntax--keyword syntax--operator">+</span> [<span class="syntax--constant syntax--numeric">2</span>,<span class="syntax--constant syntax--numeric">100</span>]</span></span>
+<span><span class="syntax--source syntax--python"><span class="syntax--comment syntax--line"># array([[  3, 102],</span></span></span>
+<span><span class="syntax--source syntax--python"><span class="syntax--comment syntax--line">#        [  7, 106]])</span></span></span>
+<span></span> 
+<span><span class="syntax--source syntax--python">b <span class="syntax--keyword syntax--operator">=</span> [[  <span class="syntax--constant syntax--numeric">2</span>],</span></span>
+<span><span class="syntax--source syntax--python"><span class="leading-whitespace">     </span>[<span class="syntax--constant syntax--numeric">100</span>]]</span></span>
+<span><span class="syntax--source syntax--python">a <span class="syntax--keyword syntax--operator">+</span> b</span></span>
+<span><span class="syntax--source syntax--python"><span class="syntax--comment syntax--line"># array([[  3,   4],</span></span></span>
+<span><span class="syntax--source syntax--python"><span class="syntax--comment syntax--line">#        [105, 106]])</span></span></span></pre>
+<p>Added by an array with same shape. The addition will be performed element by element. Subtraction, multiplication, and division are same.</p>
+<pre class="editor-colors lang-python"><span><span class="syntax--source syntax--python">b <span class="syntax--keyword syntax--operator">=</span> np.<span class="syntax--entity syntax--name syntax--function">array</span>([[<span class="syntax--constant syntax--numeric">10</span>, <span class="syntax--constant syntax--numeric">30</span>],</span></span>
+<span><span class="syntax--source syntax--python"><span class="leading-whitespace">              </span>[<span class="syntax--constant syntax--numeric">20</span>, <span class="syntax--constant syntax--numeric">40</span>]])</span></span>
+<span><span class="syntax--source syntax--python">a <span class="syntax--keyword syntax--operator">+</span> b   <span class="syntax--comment syntax--line"># element-wise addition</span></span></span>
+<span><span class="syntax--source syntax--python"><span class="syntax--comment syntax--line"># array([[11, 32],</span></span></span>
+<span><span class="syntax--source syntax--python"><span class="syntax--comment syntax--line">#        [25, 46]])</span></span></span></pre>
+<p>Take sin/square/sqrt/power/exponiential/logarithm of each element:</p>
+<pre class="editor-colors lang-python"><span><span class="syntax--source syntax--python">np.<span class="syntax--entity syntax--name syntax--function">sin</span>(a)      <span class="syntax--comment syntax--line"># a_ij = sin(a_ij), sine</span></span></span>
+<span><span class="syntax--source syntax--python">np.<span class="syntax--entity syntax--name syntax--function">square</span>(a)   <span class="syntax--comment syntax--line"># a_ij = (a_ij)^2, square</span></span></span>
+<span><span class="syntax--source syntax--python">np.<span class="syntax--entity syntax--name syntax--function">sqrt</span>(a)     <span class="syntax--comment syntax--line"># a_ij = √(a_ij), square root</span></span></span>
+<span><span class="syntax--source syntax--python">np.<span class="syntax--entity syntax--name syntax--function">power</span>(a, <span class="syntax--constant syntax--numeric">5</span>) <span class="syntax--comment syntax--line"># a_ij = (a_ij)^5, arbitrary power</span></span></span>
+<span><span class="syntax--source syntax--python">np.<span class="syntax--entity syntax--name syntax--function">exp</span>(a)      <span class="syntax--comment syntax--line"># a_ij = e^(a_ij), exponiential</span></span></span>
+<span><span class="syntax--source syntax--python">np.<span class="syntax--entity syntax--name syntax--function">log</span>(a)      <span class="syntax--comment syntax--line"># a_ij = log(a_ij), logarithm</span></span></span></pre>
+<h3 id="reshaping-%2F-indexing-%2F-slicing-%2F">Reshaping / indexing / slicing /</h3>
+<p>You can change an array’s shape via <code style="font-family: Menlo, Consolas, &quot;DejaVu Sans Mono&quot;, monospace;">reshape</code>:</p>
+<pre class="editor-colors lang-python"><span><span class="syntax--source syntax--python">a <span class="syntax--keyword syntax--operator">=</span> np.<span class="syntax--entity syntax--name syntax--function">arange</span>(<span class="syntax--constant syntax--numeric">9</span>)</span></span>
+<span><span class="syntax--source syntax--python"><span class="syntax--comment syntax--line"># array([0, 1, 2, 3, 4, 5, 6, 7, 8])</span></span></span>
+<span></span> 
+<span><span class="syntax--source syntax--python">a <span class="syntax--keyword syntax--operator">=</span> a.<span class="syntax--entity syntax--name syntax--function">reshape</span>(<span class="syntax--constant syntax--numeric">3</span>,<span class="syntax--constant syntax--numeric">3</span>)</span></span>
+<span><span class="syntax--source syntax--python"><span class="syntax--comment syntax--line"># array([[0, 1, 2],</span></span></span>
+<span><span class="syntax--source syntax--python"><span class="syntax--comment syntax--line">#        [3, 4, 5],</span></span></span>
+<span><span class="syntax--source syntax--python"><span class="syntax--comment syntax--line">#        [6, 7, 8]])</span></span></span></pre>
+<p>Access one element (indexing):</p>
+<pre class="editor-colors lang-python"><span><span class="syntax--source syntax--python">a[<span class="syntax--constant syntax--numeric">0</span>,<span class="syntax--constant syntax--numeric">1</span>]     <span class="syntax--comment syntax--line"># zeroth row, first column</span></span></span>
+<span></span> 
+<span><span class="syntax--source syntax--python">a[<span class="syntax--constant syntax--numeric">0</span>,<span class="syntax--constant syntax--numeric">0</span>] <span class="syntax--keyword syntax--operator">=</span> <span class="syntax--constant syntax--numeric">5</span> <span class="syntax--comment syntax--line"># assignment: a_00 = 5</span></span></span></pre>
+<p>Access a block (slicing):</p>
+<pre class="editor-colors lang-python"><span><span class="syntax--source syntax--python"><span class="syntax--comment syntax--line"># select first two rows and first two columns</span></span></span>
+<span><span class="syntax--source syntax--python">a[<span class="syntax--constant syntax--numeric">0</span>:<span class="syntax--constant syntax--numeric">2</span>, <span class="syntax--constant syntax--numeric">0</span>:<span class="syntax--constant syntax--numeric">2</span>]</span></span>
+<span><span class="syntax--source syntax--python"><span class="syntax--comment syntax--line"># array([[0, 1],</span></span></span>
+<span><span class="syntax--source syntax--python"><span class="syntax--comment syntax--line">#        [3, 4]])</span></span></span>
+<span></span> 
+<span><span class="syntax--source syntax--python">a[<span class="syntax--constant syntax--numeric">0</span>, :] <span class="syntax--comment syntax--line"># zeroth row</span></span></span>
+<span><span class="syntax--source syntax--python">a[:, <span class="syntax--constant syntax--numeric">2</span>] <span class="syntax--comment syntax--line"># second column</span></span></span>
+<span></span> 
+<span><span class="syntax--source syntax--python"><span class="syntax--comment syntax--line"># select a single channel</span></span></span>
+<span><span class="syntax--source syntax--python">R <span class="syntax--keyword syntax--operator">=</span> arr[:, :, <span class="syntax--constant syntax--numeric">0</span>] <span class="syntax--comment syntax--line"># red channel</span></span></span>
+<span><span class="syntax--source syntax--python">G <span class="syntax--keyword syntax--operator">=</span> arr[:, :, <span class="syntax--constant syntax--numeric">1</span>] <span class="syntax--comment syntax--line"># green channel</span></span></span>
+<span><span class="syntax--source syntax--python">B <span class="syntax--keyword syntax--operator">=</span> arr[:, :, <span class="syntax--constant syntax--numeric">2</span>] <span class="syntax--comment syntax--line"># blue channel</span></span></span>
+<span></span> 
+<span><span class="syntax--source syntax--python"><span class="syntax--comment syntax--line"># horizontal derivative calculation</span></span></span>
+<span><span class="syntax--source syntax--python">diff <span class="syntax--keyword syntax--operator">=</span> R[:, <span class="syntax--constant syntax--numeric">1</span>:] <span class="syntax--keyword syntax--operator">-</span> R[:, :<span class="syntax--keyword syntax--operator">-</span><span class="syntax--constant syntax--numeric">1</span>]</span></span></pre>
+<h2 id="edge-detection-via-canny-edge-detector-2">Edge Detection via Canny Edge Detector</h2>
+<p>As you have learnt, Canny edge detector contains following steps:</p>
+<ol>
+<li>Gaussian Smoothing</li>
+<li>Sobel Operator</li>
+<li>Non-max suppression</li>
+<li>Thresholding</li>
+<li>Hough transform</li>
+</ol>
+<p><strong>RGB to Greyscale</strong>.
+For simplicity, we only discuss grayscale image here. First, we need to convert colour image to grayscale image. A common used rgb-to-gray formula is:</p>
+<span class="math display-math"><script type="math/tex; mode=display">Y = 0.2989 \; R + 0.5870 \; G + 0.1140 \; B 
+</script></span>
+<pre class="editor-colors lang-python"><span><span class="syntax--source syntax--python"><span class="syntax--comment syntax--line"># you may use 'rgb2gray' function in 'edge.py' directly.</span></span></span>
+<span><span class="syntax--source syntax--python">R <span class="syntax--keyword syntax--operator">=</span> arr[:, :, <span class="syntax--constant syntax--numeric">0</span>] <span class="syntax--comment syntax--line"># red channel</span></span></span>
+<span><span class="syntax--source syntax--python">G <span class="syntax--keyword syntax--operator">=</span> arr[:, :, <span class="syntax--constant syntax--numeric">1</span>] <span class="syntax--comment syntax--line"># green channel</span></span></span>
+<span><span class="syntax--source syntax--python">B <span class="syntax--keyword syntax--operator">=</span> arr[:, :, <span class="syntax--constant syntax--numeric">2</span>] <span class="syntax--comment syntax--line"># blue channel</span></span></span>
+<span><span class="syntax--source syntax--python">gray <span class="syntax--keyword syntax--operator">=</span> <span class="syntax--constant syntax--numeric">0.2989</span><span class="syntax--keyword syntax--operator">*</span>R <span class="syntax--keyword syntax--operator">+</span> <span class="syntax--constant syntax--numeric">0.5870</span><span class="syntax--keyword syntax--operator">*</span>G <span class="syntax--keyword syntax--operator">+</span> <span class="syntax--constant syntax--numeric">0.1140</span><span class="syntax--keyword syntax--operator">*</span>B</span></span></pre>
+<p><strong>Convolution</strong> via <code style="font-family: Menlo, Consolas, &quot;DejaVu Sans Mono&quot;, monospace;">ndimage.convolve</code>. Gaussian smooth and sobel involves convolution. Here is an example for general convolution:</p>
+<span class="math display-math"><script type="math/tex; mode=display">\begin{bmatrix}
+-1 & 1 \\
+-1 & 1
+\end{bmatrix} * gray</script></span>
+<pre class="editor-colors lang-python"><span><span class="syntax--source syntax--python"><span class="syntax--keyword syntax--control">from</span> scipy <span class="syntax--keyword syntax--control">import</span> ndimage</span></span>
+<span><span class="syntax--source syntax--python">weights <span class="syntax--keyword syntax--operator">=</span> [[<span class="syntax--keyword syntax--operator">-</span><span class="syntax--constant syntax--numeric">1</span>, <span class="syntax--constant syntax--numeric">1</span>],     <span class="syntax--comment syntax--line"># kernel / filter</span></span></span>
+<span><span class="syntax--source syntax--python"><span class="leading-whitespace">           </span>[<span class="syntax--keyword syntax--operator">-</span><span class="syntax--constant syntax--numeric">1</span>, <span class="syntax--constant syntax--numeric">1</span>]]</span></span>
+<span><span class="syntax--source syntax--python">diff <span class="syntax--keyword syntax--operator">=</span> ndimage.<span class="syntax--entity syntax--name syntax--function">convolve</span>(gray, weights)</span></span></pre>
+<h3 id="gaussian-smooth">Gaussian smooth</h3>
+<p>You may manually define your own gaussian kernel and apply it by <code style="font-family: Menlo, Consolas, &quot;DejaVu Sans Mono&quot;, monospace;">ndimage.convolve</code>. You can also use <code style="font-family: Menlo, Consolas, &quot;DejaVu Sans Mono&quot;, monospace;">ndimage.gaussian_filter</code> directly.</p>
+<pre class="editor-colors lang-python"><span><span class="syntax--source syntax--python"><span class="syntax--comment syntax--line"># define the gaussian kernel by hand</span></span></span>
+<span><span class="syntax--source syntax--python">gauss <span class="syntax--keyword syntax--operator">=</span> np.<span class="syntax--entity syntax--name syntax--function">array</span>([[<span class="syntax--constant syntax--numeric">1</span>, <span class="syntax--constant syntax--numeric">2</span>, <span class="syntax--constant syntax--numeric">1</span>],</span></span>
+<span><span class="syntax--source syntax--python"><span class="leading-whitespace">                  </span>[<span class="syntax--constant syntax--numeric">2</span>, <span class="syntax--constant syntax--numeric">4</span>, <span class="syntax--constant syntax--numeric">2</span>],</span></span>
+<span><span class="syntax--source syntax--python"><span class="leading-whitespace">                  </span>[<span class="syntax--constant syntax--numeric">1</span>, <span class="syntax--constant syntax--numeric">2</span>, <span class="syntax--constant syntax--numeric">1</span>]])</span></span>
+<span><span class="syntax--source syntax--python">gauss <span class="syntax--keyword syntax--operator">=</span> gauss<span class="syntax--keyword syntax--operator">/</span>gauss.<span class="syntax--entity syntax--name syntax--function">sum</span>() <span class="syntax--comment syntax--line"># normalize the sum to be 1</span></span></span>
+<span><span class="syntax--source syntax--python">out <span class="syntax--keyword syntax--operator">=</span> ndimage.<span class="syntax--entity syntax--name syntax--function">convolve</span>(gray, gauss)</span></span>
+<span></span> 
+<span><span class="syntax--source syntax--python"><span class="syntax--comment syntax--line"># or use 'ndimage.gaussian_filter' function</span></span></span>
+<span><span class="syntax--source syntax--python"><span class="syntax--comment syntax--line"># the bigger sigma is, the smoother output is.</span></span></span>
+<span><span class="syntax--source syntax--python">out <span class="syntax--keyword syntax--operator">=</span> ndimage.<span class="syntax--entity syntax--name syntax--function">gaussian_filter</span>(gray, <span class="syntax--variable syntax--parameter syntax--function">sigma</span><span class="syntax--keyword syntax--operator">=</span><span class="syntax--constant syntax--numeric">3</span>)</span></span></pre>
+<h3 id="sobel-operator">Sobel operator</h3>
+<p>Given an image <span class="math inline-math"><script type="math/tex">A</script></span> of shape <span class="math inline-math"><script type="math/tex">(H, W)</script></span>, Sobel operator computes magnitude of gradient of <span class="math inline-math"><script type="math/tex">A</script></span> as follow:</p>
+<span class="math display-math"><script type="math/tex; mode=display">G_x = A*\begin{bmatrix}
++1 & 0 & -1 \\
++2 & 0 & -2 \\
++1 & 0 & -1
+\end{bmatrix}
+\qquad\qquad
+G_y = A*\begin{bmatrix}
++1 & +2 & +1 \\
+ 0 &  0 &  0 \\
+-1 & -2 & -1
+\end{bmatrix}
+</script></span>
+<span class="math display-math"><script type="math/tex; mode=display">G = \sqrt{G_x^2 + G_y^2}
+</script></span>
+<p>This one is left for you to implement. Please compete <code style="font-family: Menlo, Consolas, &quot;DejaVu Sans Mono&quot;, monospace;">sobel</code> function in file <code style="font-family: Menlo, Consolas, &quot;DejaVu Sans Mono&quot;, monospace;">edge.py</code>. You may need <code style="font-family: Menlo, Consolas, &quot;DejaVu Sans Mono&quot;, monospace;">np.square</code> and  <code style="font-family: Menlo, Consolas, &quot;DejaVu Sans Mono&quot;, monospace;">np.sqrt</code> to calculate squares and square roots.</p>
+<h3 id="non-maximum-suppression">Non-maximum suppression</h3>
+<p>The output of Sobel operator has poor localization. Edges trigger response in multiple adjacent pixels, which makes it difficult to decide the precise location of edges. Intuitively, edge occurs where gradient reaches a maxima, so we need to suppress all non-maximum values in <span class="math inline-math"><script type="math/tex">G</script></span>, i.e., set them to 0.</p>
+<center>
+<img alt="poor localization" style="width:40%" src="image/Circle.png">
+<img alt="Non-maximum suppression" style="width:50%" src="image/NonmaxSupress.jpeg">
+</center>
+<p>We need to compare each gradient with its neighbours along normal direction of edges, which is just the gradient direction. We first normalize gradient to a unit vector (<span style="color:black"><strong>black arrow</strong></span>).</p>
+<span class="math display-math"><script type="math/tex; mode=display">\bar{G}_x = G_x/G
+</script></span>
+<span class="math display-math"><script type="math/tex; mode=display">\bar{G}_y = G_y/G
+</script></span>
+<span class="math display-math"><script type="math/tex; mode=display">\overrightarrow{g} = (\bar{G}_x, \bar{G}_y)
+</script></span>
+<!-- Then, two normal directions (__black arrows__) of the edge are
+$$-\overrightarrow{g} = (+\bar{G}_x,\;+\bar{G}_y),$$
+$$-\overrightarrow{g} = (-\bar{G}_x,\;-\bar{G}_y).$$ -->
+<p>The coordinates of two neighbours (<span style="color:blue"><strong>blue dots</strong></span>) we need to compare are</p>
+<span class="math display-math"><script type="math/tex; mode=display">{p_1} = (x_0, y_0)+\overrightarrow{g} = (x_0 + \bar{G}_x,\; y_0 + \bar{G}_y),
+</script></span>
+<span class="math display-math"><script type="math/tex; mode=display">{p_2} = (x_0, y_0)-\overrightarrow{g} = (x_0 - \bar{G}_x,\; y_0 - \bar{G}_y).
+</script></span>
+<p>Finally, we set <span class="math inline-math"><script type="math/tex">G[i,j]</script></span> to 0, if it is not the biggest one among its neighbours. For all <span class="math inline-math"><script type="math/tex">i,j</script></span>, we set</p>
+<span class="math display-math"><script type="math/tex; mode=display"> G[i, j] := \left\{\begin{array}{l}
+    0, & \text{if}\; G[i, j] < G[i + \bar{G}_y, j + \bar{G}_x]; \\
+    0, & \text{if}\; G[i, j] < G[i - \bar{G}_y, j - \bar{G}_x]; \\
+    G[i,j], & \text{elsewise.}
+\end{array} \right. </script></span>
+<p>Here conversion between coordinates and array indices is a little bit confusing. <span class="math inline-math"><script type="math/tex">x</script></span> is horizontal coordinate, so it is corresponding to <span class="math inline-math"><script type="math/tex">j</script></span>, the column index, not <span class="math inline-math"><script type="math/tex">i</script></span>. Similarly, <span class="math inline-math"><script type="math/tex">y</script></span> is corresponding to <span class="math inline-math"><script type="math/tex">i</script></span>. Coordinate <span class="math inline-math"><script type="math/tex">(x,y)</script></span> and array index <span class="math inline-math"><script type="math/tex">[i,j]</script></span> has following relation:</p>
+<span class="math display-math"><script type="math/tex; mode=display">\left\{\begin{matrix}x = j\\ y = i\end{matrix}\right.
+</script></span>
+<p>In most case, coordinates of neighbours are not integers, so we need interpolation to get values of</p>
+<span class="math display-math"><script type="math/tex; mode=display">G[i + \bar{G}_y, j + \bar{G}_x] \;\text{and}\; G[i - \bar{G}_y, j - \bar{G}_x].
+</script></span>
+<p>Function <a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.ndimage.map_coordinates.html"><code style="font-family: Menlo, Consolas, &quot;DejaVu Sans Mono&quot;, monospace;">ndimage.map_coordinates(input, indices)</code></a> can help you calculate the interpolated value at given indices, e.g.,</p>
+<pre class="editor-colors lang-python"><span><span class="syntax--source syntax--python"><span class="syntax--comment syntax--line"># get interpolated value at three indices</span></span></span>
+<span><span class="syntax--source syntax--python"><span class="syntax--comment syntax--line"># [0.5, 0.5], [1.5, 3.5], [2.5, 4.5]</span></span></span>
+<span><span class="syntax--source syntax--python">ndimage.<span class="syntax--entity syntax--name syntax--function">map_coordinates</span>(grey, [[<span class="syntax--constant syntax--numeric">0.5</span>, <span class="syntax--constant syntax--numeric">1.5</span>, <span class="syntax--constant syntax--numeric">2.5</span>],</span></span>
+<span><span class="syntax--source syntax--python"><span class="leading-whitespace">                               </span>[<span class="syntax--constant syntax--numeric">0.5</span>, <span class="syntax--constant syntax--numeric">3.5</span>, <span class="syntax--constant syntax--numeric">4.5</span>]])</span></span></pre>
+<h3 id="thresholding">Thresholding</h3>
+<p>After finishing non-maximum suppression, next step is to binarize the gradient magnitude. In standard Canny edge detector, binarization involves Hysteresis thresholding and connectivity analysis. For simplicity, we only choose a single threshold and also ommit connectivity analysis in this experiment. Since gradient magnitude ranged range from 0 to <span class="math inline-math"><script type="math/tex">255\sqrt{2}\approx361</script></span>, you can choose any proper threshold in [0, 361]. For example:</p>
+<pre class="editor-colors lang-python"><span><span class="syntax--source syntax--python"><span class="syntax--comment syntax--line"># threshold</span></span></span>
+<span><span class="syntax--source syntax--python">t <span class="syntax--keyword syntax--operator">=</span> <span class="syntax--constant syntax--numeric">180</span></span></span>
+<span></span> 
+<span><span class="syntax--source syntax--python"><span class="syntax--comment syntax--line"># binarize G</span></span></span>
+<span><span class="syntax--source syntax--python">G[G<span class="syntax--keyword syntax--operator">&lt;=</span>t] <span class="syntax--keyword syntax--operator">=</span> <span class="syntax--constant syntax--numeric">0</span></span></span>
+<span><span class="syntax--source syntax--python">G[G<span class="syntax--keyword syntax--operator">&gt;</span>t] <span class="syntax--keyword syntax--operator">=</span> <span class="syntax--constant syntax--numeric">255</span></span></span></pre>
+<h3 id="hough-transform">Hough Transform</h3>
+<p>After getting the edge map, now we want to recognize geometric shapes, such as straight lines, circles, ellipses, from the edge map. A classical method to do so is Hough Transform. In this section, we demonstrate how to recognize straight lines by Hough transform.</p>
+<p>Shapes can be represented as equations with parameters, e.g., a kind of equation for straight line is</p>
+<span class="math display-math"><script type="math/tex; mode=display">\rho = cos(\theta)\;x + sin(\theta)\;y.
+</script></span>
+<p>There are two parameters in this equation, the distance to origin <span class="math inline-math"><script type="math/tex">\rho</script></span> and the angle of normal direction <span class="math inline-math"><script type="math/tex">\theta</script></span>. The range of <span class="math inline-math"><script type="math/tex">\theta</script></span> is <span class="math inline-math"><script type="math/tex">[0, \pi]</script></span>; and range of <span class="math inline-math"><script type="math/tex">\rho</script></span> is <span class="math inline-math"><script type="math/tex">[-D, +D]</script></span>, where <span class="math inline-math"><script type="math/tex">D=\sqrt{H^2+W^2}</script></span> is the length of the diagonal of the image.</p>
+<center>
+<img alt="line equation" src="image/Hough.jpeg" style="width:80%">
+</center>
+<p>Given a point <span class="math inline-math"><script type="math/tex">(x_0, y_0)</script></span>, the parameters of all straight lines passing through this point satisfy equation</p>
+<span class="math display-math"><script type="math/tex; mode=display">\rho = cos(\theta)\;x_0 + sin(\theta)\;y_0.
+</script></span>
+<p>For a straight line with parameters <span class="math inline-math"><script type="math/tex">(\rho_0, \theta_0)</script></span>, if <span class="math inline-math"><script type="math/tex">n</script></span> points <span class="math inline-math"><script type="math/tex">(x_1, y_1), (x_2, y_2), ..., (x_n, y_n)</script></span> are all on this line, then the corresponding <span class="math inline-math"><script type="math/tex">n</script></span> function curves in <span class="math inline-math"><script type="math/tex">\rho</script></span>-<span class="math inline-math"><script type="math/tex">\theta</script></span> space</p>
+<span class="math display-math"><script type="math/tex; mode=display">\begin{matrix}
+\rho = cos(\theta)\;x_1 + sin(\theta)\;y_1, \\
+\vdots \\
+\rho = cos(\theta)\;x_n + sin(\theta)\;y_n,
+\end{matrix}
+</script></span>
+<p>intersect at point <span class="math inline-math"><script type="math/tex">(\rho_0, \theta_0)</script></span>.</p>
+<p>Thus we can design a voting procedure to elect the most possible straight lines as follows:</p>
+<ol>
+<li>Discretize <span class="math inline-math"><script type="math/tex">\rho</script></span>-<span class="math inline-math"><script type="math/tex">\theta</script></span> space into a grid of cells, so that there are only finite number of candidates. A proper discretization for <span class="math inline-math"><script type="math/tex">\theta</script></span> may be dividing <span class="math inline-math"><script type="math/tex">[0, \pi]</script></span> into 100-1000 parts. For <span class="math inline-math"><script type="math/tex">\rho</script></span>, 1 should be a proper cell length.</li>
+<li>Each edge point <span class="math inline-math"><script type="math/tex">(x, y)</script></span> votes for <span class="math inline-math"><script type="math/tex">(b,\theta)</script></span> cells which function <span class="math inline-math"><script type="math/tex">\rho = cos(\theta)\;x + sin(\theta)\;y</script></span> passing through (<span style="color:blue">blue cells</span>). The more votes a cell gets, the more likely there is a straight line on the edge map <span class="math inline-math"><script type="math/tex">G</script></span>.</li>
+<li>Find local maximum. After voting, you will get a voting result like following picture, then we need to find local maximums. Please compare each cell with its 8 neighbours. If the cell got most votes among neighbours, it is a local maximum, and you probably find an straight line, but you still need consider absolute value of its votes. The more votes, the more likely.</li>
+</ol>
+<center>
+<img alt="hough transform result" src="image/houghed.png" style="width:60%">
+</center>
+<h1 id="assignment">Assignment</h1>
+<p>Implement Canny edge detector and detect straight lines in <code style="font-family: Menlo, Consolas, &quot;DejaVu Sans Mono&quot;, monospace;">road.jpeg</code>. Your program should contain following steps:</p>
+<ol>
+<li>Convert colour image into grayscale image. (1 point)</li>
+<li>Perform Gaussian smoothing, save the result as <code style="font-family: Menlo, Consolas, &quot;DejaVu Sans Mono&quot;, monospace;">gauss.jpg</code>. (2 points)</li>
+<li>Apply sobel operator, save the x-gradient <span class="math inline-math"><script type="math/tex">G_x</script></span>, y-gradient <span class="math inline-math"><script type="math/tex">G_y</script></span> and magnitude <span class="math inline-math"><script type="math/tex">G</script></span> as <code style="font-family: Menlo, Consolas, &quot;DejaVu Sans Mono&quot;, monospace;">G_x.jpg</code>, <code style="font-family: Menlo, Consolas, &quot;DejaVu Sans Mono&quot;, monospace;">G_y.jpg</code> and <code style="font-family: Menlo, Consolas, &quot;DejaVu Sans Mono&quot;, monospace;">G.jpg</code>. (3 points)</li>
+<li>Non-maximum value suppression. Save suppression result as <code style="font-family: Menlo, Consolas, &quot;DejaVu Sans Mono&quot;, monospace;">supress.jpg</code>. (4 points)</li>
+<li>Thresholding. Choose a proper threshold, then binarize your suppression result. Save binarization result as <code style="font-family: Menlo, Consolas, &quot;DejaVu Sans Mono&quot;, monospace;">edgemap.jpg</code>. (1 point)</li>
+<li>Hough Transform. Save the “voting” result as <code style="font-family: Menlo, Consolas, &quot;DejaVu Sans Mono&quot;, monospace;">hough.jpg</code>. (3 points)</li>
+<li>Find out several most possible straight lines. Draw them on original image, then save as <code style="font-family: Menlo, Consolas, &quot;DejaVu Sans Mono&quot;, monospace;">detection_result.jpg</code>.  To draw lines on image, see <a href="https://stackoverflow.com/questions/13053443/drawing-a-line-on-an-image-with-pil">this example</a>. (1 point)</li>
+</ol>
+<p>Your submission should contain:</p>
+<ol>
+<li>All your intermediate results (images you are asked to save).</li>
+<li>A runnable program <code style="font-family: Menlo, Consolas, &quot;DejaVu Sans Mono&quot;, monospace;">edge.py</code> that can reproduce your results.</li>
+</ol>
+<p>Please submit before <strong>23:59 on November 1th (Sunday)</strong>. You may submit as many times as you want, but only your latest submission will be graded.</p>
+
+  </body>
+</html>
