@@ -97,7 +97,7 @@ def hough(G):
     H = G.shape[0]  #Y
     W = G.shape[1]  #X
     Maxdist = int(np.round(np.sqrt(H**2 +W**2)))
-    thetas = np.deg2rad(np.linspace(0,180.0, num=720, endpoint=False)) ##TODO: linspace
+    thetas = np.deg2rad(np.linspace(0,180.0, num=720, endpoint=False))
     rhos = np.linspace(-Maxdist,Maxdist, 2*Maxdist)
     accumulator = np.zeros((2*Maxdist, len(thetas)))
 
@@ -110,6 +110,44 @@ def hough(G):
                     accumulator[int(p)+Maxdist][k] +=1
     
     return accumulator , thetas ,rhos
+
+def Local_MAX(G,i,j):
+    row_limit = len(G)
+    column_limit = len(G[0])
+    for x in range(max(0,i-1),min(i+2,row_limit)):
+        for y in range(max(0,j-1), min(j+2,column_limit)):
+            if x != i or y!= j:
+                #G[i][j] is local max and Larger than 130 vote
+                if G[x][y] > G[i][j] or 130 > G[i][j]:
+                    return False
+    return True    
+
+def DrawLine(img_name,mask_index):
+    im = Image.open(img_name)
+    draw = ImageDraw.Draw(im)
+
+    #For each mask, draw a line
+    for index in range(len(mask_index)):
+        #Cut 0~180 degree in 720 parts before
+        theta = np.deg2rad(mask_index[index][1]/4)
+        p = mask_index[index][0]    
+        rho = rhos[p]
+        a = np.cos(theta)
+        b = np.sin(theta) 
+
+        #Cal the x/y-intercept
+        x0 = (a*rho)
+        y0 = (b*rho)
+
+        #1000 is length of line
+        x1 = int(x0 + 1000 * (-b))
+        y1 = int(y0 + 1000 * (a))
+        x2 = int(x0 - 1000 * (-b))
+        y2 = int(y0 - 1000 * (a))
+
+        draw.line([x1,y1,x2,y2], fill = 128, width=1)
+    
+    im = im.save("detection_result.jpg")
 
 img_name = 'road.jpeg'
 img = read_img_as_array(img_name)
@@ -128,18 +166,6 @@ save_array_as_img(edgemap_G, "edgemap.jpg")
 accumulator , thetas ,rhos = hough(edgemap_G)
 
 save_array_as_img(accumulator, "hough.jpg")
-
-def Local_MAX(G,i,j):
-    row_limit = len(G)
-    column_limit = len(G[0])
-    for x in range(max(0,i-1),min(i+2,row_limit)):
-        for y in range(max(0,j-1), min(j+2,column_limit)):
-            if x != i or y!= j:
-                #G[i][j] is local max and Larger than 100 vote
-                if G[x][y] > G[i][j] or 120 > G[i][j]:
-                    return False
-    return True    
-
 row_limit = len(accumulator)
 column_limit = len(accumulator[0])
 
@@ -151,29 +177,4 @@ for i in range(row_limit):
 
 #Get all the local_max point (x,y)
 mask_index = np.asarray(np.where(mask==1)).T
-im = Image.open(img_name)
-draw = ImageDraw.Draw(im)
-
-print("Start Draw!")
-#For each mask, draw a line
-for index in range(len(mask_index)):
-    #Cut 0~180 degree in 720 parts before
-    theta = np.deg2rad(mask_index[index][1]/4)
-    p = mask_index[index][0]    
-    rho = rhos[p]
-    a = np.cos(theta)
-    b = np.sin(theta) 
-
-    #Cal the x/y-intercept
-    x0 = (a*rho)
-    y0 = (b*rho)
-
-    #1000 is length of line
-    x1 = int(x0 + 1000 * (-b))
-    y1 = int(y0 + 1000 * (a))
-    x2 = int(x0 - 1000 * (-b))
-    y2 = int(y0 - 1000 * (a))
-
-    draw.line([x1,y1,x2,y2], fill = 128, width=1)
-  
-im = im.save("detection_result.jpg")
+DrawLine(img_name,mask_index)
