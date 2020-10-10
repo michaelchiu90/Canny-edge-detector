@@ -103,7 +103,7 @@ def hough(G):
         bins=[thetas,rhos]
     )
     accumulator = np.transpose(accumulator)   
-    return accumulator , thetas ,rhos
+    return accumulator , rhos
 
 
 img_name = 'road.jpeg'
@@ -120,10 +120,11 @@ suppressed_G = nonmax_suppress(G, Gx, Gy)
 save_array_as_img(suppressed_G, "supress.jpg")
 edgemap_G = thresholding(suppressed_G, 80)
 save_array_as_img(edgemap_G, "edgemap.jpg")
-accumulator , thetas ,rhos = hough(edgemap_G)
+accumulator , rhos = hough(edgemap_G)
 
 save_array_as_img(accumulator, "hough.jpg")
 
+#compare with 8 neighbours
 G_RightShift = np.roll(accumulator,1,axis=1)
 G_RightShift[:,0] = 0
 G_LeftShift = np.roll(accumulator,-1,axis=1)
@@ -140,6 +141,7 @@ G_DownLeftShift = np.roll(G_LeftShift,1,axis=0)
 G_DownLeftShift[0,:] = 0
 G_DownRightShift = np.roll(G_RightShift,1,axis=0)
 G_DownRightShift[0,:] = 0
+#130 is the absolute vote no.
 mask = (accumulator > 130) & (accumulator>=G_RightShift) & (accumulator>=G_LeftShift) & (accumulator>=G_DownShift) & (accumulator>=G_UpShift) & (accumulator>=G_UpLeftShift) & (accumulator>=G_UpRightShift) & (accumulator>=G_DownLeftShift) & (accumulator>=G_DownRightShift) 
 
 #Get all the local_max point (x,y)
@@ -147,25 +149,27 @@ mask_index = np.asarray(np.where(mask==1)).T
 im = Image.open(img_name)
 draw = ImageDraw.Draw(im)
 
-#For each mask, draw a line
-for index in range(len(mask_index)):
-    #Cut 0~180 degree in 720 parts before
-    theta = np.deg2rad(mask_index[index][1]/4)
-    p = mask_index[index][0]    
-    rho = rhos[p]
-    a = np.cos(theta)
-    b = np.sin(theta) 
+theta = np.deg2rad(mask_index[:,1]/4)
+p = mask_index[:,0]
+rho = rhos[p]
+a = np.cos(theta)
+b = np.sin(theta) 
+#Cal the x/y-intercept
+x0 = (a*rho)
+y0 = (b*rho)
 
-    #Cal the x/y-intercept
-    x0 = (a*rho)
-    y0 = (b*rho)
+#1000 is length of line
+x1 = x0 + 1000 * (-b)
+y1 = y0 + 1000 * (a)
+x2 = x0 - 1000 * (-b)
+y2 = y0 - 1000 * (a)
 
-    #1000 is length of line
-    x1 = int(x0 + 1000 * (-b))
-    y1 = int(y0 + 1000 * (a))
-    x2 = int(x0 - 1000 * (-b))
-    y2 = int(y0 - 1000 * (a))
+x1 = [ int(x) for x in x1]
+y1 = [ int(x) for x in y1]
+x2 = [ int(x) for x in x2]
+y2 = [ int(x) for x in y2]
 
-    draw.line([x1,y1,x2,y2], fill = 128, width=1)
+arr = np.vstack((x1, np.vstack((y1, np.vstack((x2, y2)))))).T.reshape(-1).tolist()
+[draw.line([arr[i],arr[i+1],arr[i+2],arr[i+3]], fill = 128, width=1) for i in range(0,len(arr),4)]
 
 im = im.save("detection_result.jpg")
